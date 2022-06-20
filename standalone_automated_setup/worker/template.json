@@ -1,0 +1,45 @@
+{
+    "variables": {
+        "region": "{{env `AWS_DEFAULT_REGION`}}",
+        "aws_access_key": "{{env `AWS_ACCESS_KEY_ID`}}",
+        "aws_secret_key": "{{env `AWS_SECRET_KEY_ID`}}",
+        "instance_type": "{{env `BASIC_INSTANCE_TYPE`}}",
+        "aws_profile": "pocs"
+    },
+    "sensitive-variables":["aws_access_key","aws_secret_key"],
+    "builders": [
+        {
+            "type": "amazon-ebs",
+            "access_key": "{{user `aws_access_key`}}",
+            "secret_key": "{{user `aws_secret_key`}}",
+            "profile": "{{user `aws_profile`}}",
+            "region": "{{user `region`}}",
+            "instance_type": "{{user `instance_type`}}",
+            "ssh_username": "ec2-user",
+            "ami_name": "jenkins-worker1",
+            "ami_description": "Jenkins worker's AMI",
+            "run_tags": {
+                "Name":"jenkins-worker-automated-setup"
+            },
+            "source_ami_filter": {
+                "filters": {
+                    "virtualization-type": "hvm",
+                    "name": "amzn2-ami-hvm-2.0*x86_64*",
+                    "root-device-type": "ebs"
+                },
+                "owners": ["amazon"],
+                "most_recent": true             
+
+            }
+        }
+    ],
+    "provisioners": [
+
+        {
+            "type" : "shell",
+            "script" : "./setup.sh",
+            "execute_command" : "sudo -E -S sh '{{ .Path }}'"
+        }
+
+    ]
+}
