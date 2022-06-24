@@ -25,7 +25,7 @@ variable "shared_credentials_files" {
 variable "author" {
     type        = string
     description = "Provisioner Author"
-    default     = "Tegao"
+    default     = "pipeline-as-code"
 }
 
 
